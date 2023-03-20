@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
+use App\Models\User\Role;
+use Brryfrmnn\Transformers\Json;
 use Illuminate\Http\Request;
 
 class RoleController extends Controller
@@ -14,7 +16,16 @@ class RoleController extends Controller
      */
     public function index()
     {
-        //
+        try {
+            $role = Role::get();
+            return Json::response($role);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return Json::exception('Error Model ' . $debug = env('APP_DEBUG', false) == true ? $e : '');
+        } catch (\Illuminate\Database\QueryException $e) {
+            return Json::exception('Error Query ' . $debug = env('APP_DEBUG', false) == true ? $e : '');
+        } catch (\ErrorException $e) {
+            return Json::exception('Error Exception ' . $debug = env('APP_DEBUG', false) == true ? e : '');
+        }
     }
 
     /**
@@ -24,7 +35,11 @@ class RoleController extends Controller
      */
     public function create()
     {
-        //
+        try {
+            // 
+        } catch (\Throwable $th) {
+            //throw $th;
+        }
     }
 
     /**
@@ -35,7 +50,19 @@ class RoleController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        try {
+            $role = new Role();
+            $role->name  = $request->name;
+            $role->save();
+
+            return Json::response($role);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return Json::exception('Error Model ' . $debug = env('APP_DEBUG', false) == true ? $e : '');
+        } catch (\Illuminate\Database\QueryException $e) {
+            return Json::exception('Error Query ' . $debug = env('APP_DEBUG', false) == true ? $e : '');
+        } catch (\ErrorException $e) {
+            return Json::exception('Error Exception ' . $debug = env('APP_DEBUG', false) == true ? e : '');
+        }
     }
 
     /**
@@ -46,7 +73,17 @@ class RoleController extends Controller
      */
     public function show($id)
     {
-        //
+        try {
+            $role = Role::findOrFail($id);
+
+            return Json::response($role);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return Json::exception('Error Model ' . $debug = env('APP_DEBUG', false) == true ? $e : '');
+        } catch (\Illuminate\Database\QueryException $e) {
+            return Json::exception('Error Query ' . $debug = env('APP_DEBUG', false) == true ? $e : '');
+        } catch (\ErrorException $e) {
+            return Json::exception('Error Exception ' . $debug = env('APP_DEBUG', false) == true ? e : '');
+        }
     }
 
     /**
