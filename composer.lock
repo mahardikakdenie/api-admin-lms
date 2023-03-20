@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "fe33f98a750b8c5a51b30c78bd3fab21",
+    "content-hash": "81a4b1c1e6cbe11fc733e35ce1c4e942",
     "packages": [
         {
             "name": "brick/math",
@@ -61,6 +61,43 @@
                 }
             ],
             "time": "2022-08-10T22:54:19+00:00"
+        },
+        {
+            "name": "brryfrmnn/transformers",
+            "version": "v1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/brryfrmnn/transformers.git",
+                "reference": "c717e97eaa6d7e4d82e4ac8892aac862c3823021"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/brryfrmnn/transformers/zipball/c717e97eaa6d7e4d82e4ac8892aac862c3823021",
+                "reference": "c717e97eaa6d7e4d82e4ac8892aac862c3823021",
+                "shasum": ""
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Brryfrmnn\\Transformers\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Berry Firmann",
+                    "email": "clickdisini@gmail.com"
+                }
+            ],
+            "description": "Json transformer.",
+            "support": {
+                "issues": "https://github.com/brryfrmnn/transformers/issues",
+                "source": "https://github.com/brryfrmnn/transformers/tree/v1.0.0"
+            },
+            "time": "2021-04-24T05:11:13+00:00"
         },
         {
             "name": "dflydev/dot-access-data",
