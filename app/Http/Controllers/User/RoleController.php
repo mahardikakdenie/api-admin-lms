@@ -75,7 +75,6 @@ class RoleController extends Controller
     {
         try {
             $role = Role::findOrFail($id);
-
             return Json::response($role);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return Json::exception('Error Model ' . $debug = env('APP_DEBUG', false) == true ? $e : '');
