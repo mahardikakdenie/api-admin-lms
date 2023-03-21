@@ -106,7 +106,19 @@ class RoleController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        try {
+            $role = Role::findOrFail($id);
+            $role->name = $request->input("name", $role->name);
+            $role->save();
+
+            return Json::response($role);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return Json::exception('Error Model ' . $debug = env('APP_DEBUG', false) == true ? $e : '');
+        } catch (\Illuminate\Database\QueryException $e) {
+            return Json::exception('Error Query ' . $debug = env('APP_DEBUG', false) == true ? $e : '');
+        } catch (\ErrorException $e) {
+            return Json::exception('Error Exception ' . $debug = env('APP_DEBUG', false) == true ? e : '');
+        }
     }
 
     /**
