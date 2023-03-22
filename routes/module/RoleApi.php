@@ -20,12 +20,10 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-// Auth Module
+
 Route::prefix("role")->middleware(['auth:sanctum'])->group(function () {
     Route::get('/', [RoleController::class, 'index']);
     Route::post('/', [RoleController::class, 'store']);
     Route::get('{id}', [RoleController::class, 'show']);
     Route::put('{id}', [RoleController::class, 'update']);
 });
-
-// Role Module
