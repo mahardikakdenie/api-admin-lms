@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Lib\Helper;
+namespace App\Http\Lib;
 
 class Helper
 {
@@ -10,6 +10,20 @@ class Helper
             $query->where($field, $value);
         }
 
-        return $query
+        return $query;
+    }
+
+    public static function entities($query, $entities)
+    {
+        if ($entities != null || $entities != '') {
+            $entities = str_replace(' ', '', $entities);
+            $entities = explode(',', $entities);
+
+            try {
+                return $query = $query->with($entities);
+            } catch (\Throwable $th) {
+                return Json::exception(null, validator()->errors());
+            }
+        }
     }
 }

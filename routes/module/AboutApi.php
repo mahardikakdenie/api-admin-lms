@@ -16,5 +16,10 @@ use Illuminate\Support\Facades\Route;
 Route::prefix('dashboard')->group(function () {
     Route::prefix('about')->group(function () {
         Route::get("", [AboutController::class, 'index']);
+        Route::post("", [AboutController::class, 'store']);
+        Route::post('media', [AboutController::class, 'media']);
+        Route::put("{id}", [AboutController::class, 'update']);
+        Route::get("{id}", [AboutController::class, 'show']);
+        Route::delete("{id}", [AboutController::class, 'destroy']);
     });
 });

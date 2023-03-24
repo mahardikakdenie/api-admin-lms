@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Cms;
 
 use App\Http\Controllers\Controller;
+use App\Models\Cms\About;
+use App\Models\Media;
 use Brryfrmnn\Transformers\Json;
 use Illuminate\Http\Request;
 
@@ -13,10 +15,11 @@ class AboutController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
         try {
-            $data = About::get();
+            $data = About::entities($request->entities)
+                ->get();
 
             return Json::response($data);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
@@ -33,9 +36,23 @@ class AboutController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function media(Request $request)
     {
-        //
+        try {
+            $media = new Media();
+            $path = $request->media->store("images");
+            $media->url = $path;
+            $media->module = $request->module;
+            $media->save();
+
+            return Json::response($media);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return Json::exception('Error Model ' . $debug = env('APP_DEBUG', false) == true ? $e : '');
+        } catch (\Illuminate\Database\QueryException $e) {
+            return Json::exception('Error Query ' . $debug = env('APP_DEBUG', false) == true ? $e : '');
+        } catch (\ErrorException $e) {
+            return Json::exception('Error Exception ' . $debug = env('APP_DEBUG', false) == true ? $e : '');
+        }
     }
 
     /**
@@ -46,7 +63,22 @@ class AboutController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        try {
+
+            $data = new About();
+            $data->title = $request->title;
+            $data->content = $request->content;
+            $data->media_id = $request->media_id;
+            $data->save();
+
+            return Json::response($data);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return Json::exception('Error Model ' . $debug = env('APP_DEBUG', false) == true ? $e : '');
+        } catch (\Illuminate\Database\QueryException $e) {
+            return Json::exception('Error Query ' . $debug = env('APP_DEBUG', false) == true ? $e : '');
+        } catch (\ErrorException $e) {
+            return Json::exception('Error Exception ' . $debug = env('APP_DEBUG', false) == true ? $e : '');
+        }
     }
 
     /**
@@ -55,9 +87,20 @@ class AboutController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($id, Request $request)
     {
-        //
+        try {
+            $data = About::entities($request->entities)
+                ->findOrFail($id);
+
+            return Json::response($data);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return Json::exception('Error Model ' . $debug = env('APP_DEBUG', false) == true ? $e : '');
+        } catch (\Illuminate\Database\QueryException $e) {
+            return Json::exception('Error Query ' . $debug = env('APP_DEBUG', false) == true ? $e : '');
+        } catch (\ErrorException $e) {
+            return Json::exception('Error Exception ' . $debug = env('APP_DEBUG', false) == true ? $e : '');
+        }
     }
 
     /**
@@ -80,7 +123,21 @@ class AboutController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        try {
+            $data = About::findOrFail($id);
+            $data->title = $request->input("title", $data->title);
+            $data->content = $request->input("content", $data->content);
+            $data->media_id = $request->input("media_id", $data->media_id);
+            $data->save();
+
+            return Json::response($data);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return Json::exception('Error Model ' . $debug = env('APP_DEBUG', false) == true ? $e : '');
+        } catch (\Illuminate\Database\QueryException $e) {
+            return Json::exception('Error Query ' . $debug = env('APP_DEBUG', false) == true ? $e : '');
+        } catch (\ErrorException $e) {
+            return Json::exception('Error Exception ' . $debug = env('APP_DEBUG', false) == true ? $e : '');
+        }
     }
 
     /**
@@ -91,6 +148,17 @@ class AboutController extends Controller
      */
     public function destroy($id)
     {
-        //
+        try {
+            $data = About::findOrFail($id);
+            $data->delete();
+
+            return Json::response($data);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return Json::exception('Error Model ' . $debug = env('APP_DEBUG', false) == true ? $e : '');
+        } catch (\Illuminate\Database\QueryException $e) {
+            return Json::exception('Error Query ' . $debug = env('APP_DEBUG', false) == true ? $e : '');
+        } catch (\ErrorException $e) {
+            return Json::exception('Error Exception ' . $debug = env('APP_DEBUG', false) == true ? $e : '');
+        }
     }
 }
