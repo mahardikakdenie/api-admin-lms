@@ -7,7 +7,7 @@ class Helper
     public static function searchField($query, $field, $value)
     {
         if ($value && $field) {
-            $query->where($field, . 'LIKE' . '%' .$value . '%');
+            $query->where($field, 'LIKE' . '%' . $value . '%');
         }
 
         return $query;
