@@ -13,10 +13,14 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('carousels', function (Blueprint $table) {
+        Schema::create('registrants', function (Blueprint $table) {
             $table->id();
-            $table->string("name")->nullable();
-            $table->longText("description")->nullable();
+            $table->string("fullname");
+            $table->string("name");
+            $table->string("address");
+            $table->string("status")->nullable();
+            $table->date("birth_day");
+            $table->string("age");
             $table->softDeletes();
             $table->timestamps();
         });
@@ -29,6 +33,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('carousels');
+        Schema::dropIfExists('registrants');
     }
 };

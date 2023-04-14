@@ -13,11 +13,13 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('carousels', function (Blueprint $table) {
+        Schema::create('feature_content', function (Blueprint $table) {
             $table->id();
-            $table->string("name")->nullable();
-            $table->longText("description")->nullable();
-            $table->softDeletes();
+            $table->string('title');
+            $table->text("description");
+            $table->longText("contents")->nullable();
+            $table->unsignedBigInteger("media_id");
+            $table->foreign("media_id")->references("id")->on("medias");
             $table->timestamps();
         });
     }
@@ -29,6 +31,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('carousels');
+        Schema::dropIfExists('feature_content');
     }
 };

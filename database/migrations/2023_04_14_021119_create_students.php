@@ -13,10 +13,15 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('carousels', function (Blueprint $table) {
+        Schema::create('students', function (Blueprint $table) {
             $table->id();
-            $table->string("name")->nullable();
-            $table->longText("description")->nullable();
+            $table->string("name");
+            $table->string("nim")->unique();
+            $table->string("email")->nullable();
+            $table->string("password");
+            $table->string("phone_number")->nullable();
+            $table->unsignedBigInteger("media_id")->nullable();
+            $table->foreign("media_id")->references("id")->on("medias");
             $table->softDeletes();
             $table->timestamps();
         });
@@ -29,6 +34,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('carousels');
+        Schema::dropIfExists('students');
     }
 };

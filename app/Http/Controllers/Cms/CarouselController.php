@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Cms;
 
 use App\Http\Controllers\Controller;
 use App\Models\Cms\Carousel;
+use App\Models\Media;
 use Brryfrmnn\Transformers\Json;
 use Illuminate\Http\Request;
 
@@ -14,10 +15,10 @@ class CarouselController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
         try {
-            $data = Carousel::get();
+            $data = Carousel::entities($request->entities)->paginate($request->input("pagination", 10));;
             return Json::response($data);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return Json::exception('Error Model ' . $debug = env('APP_DEBUG', false) == true ? $e : '');
@@ -37,7 +38,8 @@ class CarouselController extends Controller
     {
         try {
             $media = new Media();
-            $media->url = $request->url;
+            $path = $request->media->store("images");
+            $media->url = $path;
             $media->module = 'carousel';
             $media->save();
 
@@ -62,8 +64,11 @@ class CarouselController extends Controller
         try {
             $data = new Carousel();
             $data->name = $request->name;
+            $data->description = $request->description;
             $data->media_id = $request->media_id;
+            $data->items = $request->items;
             $data->save();
+            return Json::response($data);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return Json::exception('Error Model ' . $debug = env('APP_DEBUG', false) == true ? $e : '');
         } catch (\Illuminate\Database\QueryException $e) {
@@ -116,8 +121,10 @@ class CarouselController extends Controller
     {
         try {
             $data = Carousel::findOrFail($id);
-            $data->name = $request->name;
-            $data->description = $request->description;
+            $data->name = $request->input("name", $data->name);
+            $data->description = $request->input("description", $data->description);
+            $data->media_id = $request->input("media_id", $data->media_id);
+            $data->items = $request->input("items", $data->items);
             $data->save();
 
             return Json::response($data);
@@ -126,7 +133,7 @@ class CarouselController extends Controller
         } catch (\Illuminate\Database\QueryException $e) {
             return Json::exception('Error Query ' . $debug = env('APP_DEBUG', false) == true ? $e : '');
         } catch (\ErrorException $e) {
-            return Json::exception('Error Exception ' . $debug = env('APP_DEBUG', false) == true ? e : '');
+            return Json::exception('Error Exception ' . $debug = env('APP_DEBUG', false) == true ? $e : '');
         }
     }
 
@@ -138,6 +145,17 @@ class CarouselController extends Controller
      */
     public function destroy($id)
     {
-        //
+        try {
+            $data = Carousel::findOrFail($id);
+            $data->delete();
+
+            return Json::response($data);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return Json::exception('Error Model ' . $debug = env('APP_DEBUG', false) == true ? $e : '');
+        } catch (\Illuminate\Database\QueryException $e) {
+            return Json::exception('Error Query ' . $debug = env('APP_DEBUG', false) == true ? $e : '');
+        } catch (\ErrorException $e) {
+            return Json::exception('Error Exception ' . $debug = env('APP_DEBUG', false) == true ? e : '');
+        }
     }
 }

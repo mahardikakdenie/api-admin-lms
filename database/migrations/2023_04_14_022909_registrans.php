@@ -13,12 +13,8 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('carousels', function (Blueprint $table) {
-            $table->id();
-            $table->string("name")->nullable();
-            $table->longText("description")->nullable();
-            $table->softDeletes();
-            $table->timestamps();
+        Schema::table("registrants", function (Blueprint $table) {
+            $table->foreignId("institution_id")->constrained();
         });
     }
 
@@ -29,6 +25,9 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('carousels');
+        Schema::table("registrants", function (Blueprint $table) {
+            $table->dropForeign(["institution_id"]);
+            $table->dropColumn("institution_id");
+        });
     }
 };
