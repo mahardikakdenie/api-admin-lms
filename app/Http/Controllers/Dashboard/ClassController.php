@@ -1,25 +1,25 @@
 <?php
 
-namespace App\Http\Controllers\Main;
+namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\Controller;
-use App\Models\Main\Student;
+use App\Models\Dashboard\Room;
+use App\Models\StudentHaveClass;
 use Brryfrmnn\Transformers\Json;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
 
-class StudentController extends Controller
+class ClassController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
+     * @param \Illuminate\Http\Request
      * @return \Illuminate\Http\Response
      */
     public function index(Request $request)
     {
         try {
-
-            $data = Student::entities($request->entities)
+            $data = Room::entities($request->entities)
                 ->paginate($request->input("pagination", 10));
 
             return Json::response($data);
@@ -35,11 +35,27 @@ class StudentController extends Controller
     /**
      * Show the form for creating a new resource.
      *
+     * @param \Illuminate\Http\Request
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function addStudent(Request $request, $room_id)
     {
-        //
+        try {
+            foreach ($request->student_id as $key => $value) {
+                $student_have_class = new StudentHaveClass();
+                $student_have_class->room_id = $room_id;
+                $student_have_class->student_id = $value;
+                $student_have_class->save();
+            }
+
+            return Json::response($student_have_class);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return Json::exception('Error Model ' . $debug = env('APP_DEBUG', false) == true ? $e : '');
+        } catch (\Illuminate\Database\QueryException $e) {
+            return Json::exception('Error Query ' . $debug = env('APP_DEBUG', false) == true ? $e : '');
+        } catch (\ErrorException $e) {
+            return Json::exception('Error Exception ' . $debug = env('APP_DEBUG', false) == true ? $e : '');
+        }
     }
 
     /**
@@ -51,13 +67,11 @@ class StudentController extends Controller
     public function store(Request $request)
     {
         try {
-            $data = new Student();
-            $data->name = $request->name;
-            $data->nim = $request->nim;
-            $data->email = $request->email;
-            $data->password = Hash::make($request->password);
-            $data->phone_number = $request->phone_number;
-            $data->media_id = $request->media_id;
+            $data = new Room();
+            $data->title = $request->title;
+            $data->description = $request->description;
+            $data->teacher_id = $request->teacher_id;
+            $data->institution_id = $request->institution_id;
             $data->save();
 
             return Json::response($data);
@@ -79,10 +93,11 @@ class StudentController extends Controller
     public function show($id, Request $request)
     {
         try {
-            $student = Student::entities($request->entities)
+            $data = Room::entities($request->entities)
                 ->findOrFail($id);
 
-            return Json::response($student);
+
+            return Json::response($data);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return Json::exception('Error Model ' . $debug = env('APP_DEBUG', false) == true ? $e : '');
         } catch (\Illuminate\Database\QueryException $e) {
@@ -113,12 +128,11 @@ class StudentController extends Controller
     public function update(Request $request, $id)
     {
         try {
-            $data = new Student();
-            $data->name = $request->input('name', $data->name);
-            $data->nim = $request->input('nim', $data->nim);
-            $data->email = $request->input('email', $data->email);
-            $data->phone_number = $request->input('phone_number', $data->phone_number);
-            $data->media_id = $request->input('media_id', $data->media_id);
+            $data = new Room();
+            $data->title = $request->input('title', $data->title);
+            $data->description = $request->input('description', $data->description);
+            $data->teacher_id = $request->input('teacher_id', $data->teacher_id);
+            $data->institution_id = $request->input('institution_id', $data->institution_id);
             $data->save();
 
             return Json::response($data);
@@ -140,7 +154,7 @@ class StudentController extends Controller
     public function destroy($id)
     {
         try {
-            $data = Student::findOrFail($id);
+            $data = Room::findOrFail($id);
             $data->delete();
 
             return Json::response($data);
