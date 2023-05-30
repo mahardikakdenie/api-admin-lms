@@ -15,6 +15,15 @@ class Helper
         return $query;
     }
 
+    public static function matchField($query, $field, $value)
+    {
+        if ($field && $value && $value !== 'all') {
+            $query->where($field, $value);
+        }
+
+        return $query;
+    }
+
     public static function entities($query, $entities)
     {
         if ($entities != null || $entities != '') {

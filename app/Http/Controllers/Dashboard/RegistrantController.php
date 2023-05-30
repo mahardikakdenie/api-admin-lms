@@ -111,7 +111,23 @@ class RegistrantController extends Controller
      */
     public function update(Request $request, $id)
     {
-        
+        try {
+            $data = Registrant::findOrFail($id);
+            $data->fullname = $request->input("fullname", $data->fullname);
+            $data->name = $request->input("name", $data->name);
+            $data->status = $request->input("status", $data->status);
+            $data->birth_day = $request->input("birth_day", $data->birth_day);
+            $data->age = $request->input("age", $data->age);
+            $data->institution_id = $request->input("age", $data->institution_id);
+            $data->save();
+            return Json::response($data);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return Json::exception('Error Model ' . $debug = env('APP_DEBUG', false) == true ? $e : '');
+        } catch (\Illuminate\Database\QueryException $e) {
+            return Json::exception('Error Query ' . $debug = env('APP_DEBUG', false) == true ? $e : '');
+        } catch (\ErrorException $e) {
+            return Json::exception('Error Exception ' . $debug = env('APP_DEBUG', false) == true ? $e : '');
+        }
     }
 
     /**

@@ -43,8 +43,8 @@ class AuthController extends Controller
 	public function login(Request $request)
 	{
 		try {
-			$user = User::where('name', $request->name)
-				->orWhere('email', $request->name)
+			$user = User::where('name', $request->email)
+				->orWhere('email', $request->email)
 				->first();
 
 			if (!$user || !Hash::check($request->password, $user->password)) {

@@ -16,4 +16,14 @@ class UserHaveInstitution extends Model
     {
         return $this->belongsTo(Institution::class, 'institution_id');
     }
+
+    public function teacher()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function data()
+    {
+        return $this->belongsTo(Institution::class, 'institution_id');
+    }
 }

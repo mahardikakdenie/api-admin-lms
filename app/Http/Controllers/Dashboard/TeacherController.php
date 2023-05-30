@@ -13,17 +13,63 @@ use Illuminate\Support\Facades\Hash;
 
 class TeacherController extends Controller
 {
+
+    /**
+     * 
+     * Summary Teacher
+     * 
+     * @return \Illuminate\Http\Request
+     * @return \Illuminate\Http\Response
+     */
+    public function summary(Request $request)
+    {
+        try {
+
+            $data = [
+                "all" => 0,
+                'active' => 0,
+                'non_active' => 0,
+                'deleted' => 0,
+            ];
+
+            $data['all'] =  Teacher::count();
+            $data['active'] = Teacher::where('status', 'active')->count();
+            $data['non_active'] = Teacher::where('status', 'non-active')
+                ->orWhere('status', '')
+                ->orWhere('status', null)
+                ->count();
+            $data['deleted'] = Teacher::where('status', 'deleted')->count();
+
+            return Json::response($data);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return Json::exception('Error Model ' . $debug = env('APP_DEBUG', false) == true ? $e : '');
+        } catch (\Illuminate\Database\QueryException $e) {
+            return Json::exception('Error Query ' . $debug = env('APP_DEBUG', false) == true ? $e : '');
+        } catch (\ErrorException $e) {
+            return Json::exception('Error Exception ' . $debug = env('APP_DEBUG', false) == true ? $e : '');
+        }
+    }
+
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\Responsei
      */
-    public function index()
+    public function index(Request $request)
     {
         try {
-            // 
-        } catch (\Throwable $th) {
-            //throw $th;
+
+            $data = Teacher::entities($request->entities)
+                ->summary($request->summary)
+                ->paginate($request->input("paginate", 10));
+
+            return Json::response($data);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return Json::exception('Error Model ' . $debug = env('APP_DEBUG', false) == true ? $e : '');
+        } catch (\Illuminate\Database\QueryException $e) {
+            return Json::exception('Error Query ' . $debug = env('APP_DEBUG', false) == true ? $e : '');
+        } catch (\ErrorException $e) {
+            return Json::exception('Error Exception ' . $debug = env('APP_DEBUG', false) == true ? $e : '');
         }
     }
 
@@ -66,14 +112,18 @@ class TeacherController extends Controller
             $role_have_user->role_id = 3;
             $role_have_user->save();
 
-            $teacher->institution->institution;
+            $teacher->institution;
 
+            DB::commit();
             return Json::response($teacher);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            DB::rollBack();
             return Json::exception('Error Model ' . $debug = env('APP_DEBUG', false) == true ? $e : '');
         } catch (\Illuminate\Database\QueryException $e) {
+            DB::rollBack();
             return Json::exception('Error Query ' . $debug = env('APP_DEBUG', false) == true ? $e : '');
         } catch (\ErrorException $e) {
+            DB::rollBack();
             return Json::exception('Error Exception ' . $debug = env('APP_DEBUG', false) == true ? $e : '');
         }
     }
@@ -131,7 +181,31 @@ class TeacherController extends Controller
     {
         try {
             $data = Teacher::findOrFail($id);
-            $data->delete();
+            $data->status = 'deleted';
+            $data->save();
+
+            return Json::response($data);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return Json::exception('Error Model ' . $debug = env('APP_DEBUG', false) == true ? $e : '');
+        } catch (\Illuminate\Database\QueryException $e) {
+            return Json::exception('Error Query ' . $debug = env('APP_DEBUG', false) == true ? $e : '');
+        } catch (\ErrorException $e) {
+            return Json::exception('Error Exception ' . $debug = env('APP_DEBUG', false) == true ? $e : '');
+        }
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function actived($id)
+    {
+        try {
+            $data = Teacher::findOrFail($id);
+            $data->status = 'active ';
+            $data->save();
 
             return Json::response($data);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {

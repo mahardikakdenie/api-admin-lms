@@ -38,6 +38,8 @@ class RouteServiceProvider extends ServiceProvider
                 ->group(base_path('routes/module/TestimonialApi.php'))
                 ->group(base_path('routes/module/FeatureContentApi.php'))
                 ->group(base_path('routes/module/CarouselApi.php'))
+                ->group(base_path('routes/module/Dashboard/TeacherApi.php'))
+                ->group(base_path('routes/module/Dashboard/InstitutionApi.php'))
                 ->group(base_path('routes/module/Dashboard/RegistrantApi.php'));
 
             Route::middleware('web')
@@ -50,6 +52,7 @@ class RouteServiceProvider extends ServiceProvider
      *
      * @return void
      */
+
     protected function configureRateLimiting()
     {
         RateLimiter::for('api', function (Request $request) {

@@ -18,8 +18,13 @@ class Teacher extends Model
         return Helper::entities($query, $entities);
     }
 
+    public function scopeSummary($query, $summary)
+    {
+        Helper::matchField($query, 'status', $summary);
+    }
+
     public function institution()
     {
-        return $this->hasMany(UserHaveInstitution::class, 'user_id');
+        return $this->hasOne(UserHaveInstitution::class, 'user_id');
     }
 }
