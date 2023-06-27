@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\User\MeController;
 use App\Http\Controllers\User\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -25,4 +26,8 @@ Route::prefix("user")->middleware(['auth:sanctum'])->group(function () {
     Route::post('', [UserController::class, 'store']);
     Route::get('{id}', [UserController::class, 'show']);
     Route::put('{id}', [UserController::class, 'update']);
+});
+
+Route::prefix('me')->middleware(['auth:sanctum'])->group(function () {
+    Route::get('', [MeController::class, 'me']);
 });

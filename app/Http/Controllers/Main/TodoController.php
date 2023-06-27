@@ -1,45 +1,16 @@
 <?php
 
-namespace App\Http\Controllers\Dashboard;
+namespace App\Http\Controllers\Main;
 
 use App\Http\Controllers\Controller;
-use App\Models\Dashboard\Subject;
+use App\Models\Main\Todo;
+use App\Models\Main\UserHasTodo;
 use Brryfrmnn\Transformers\Json;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
-class SubjectController extends Controller
+class TodoController extends Controller
 {
-    /**
-     * Displat a listing summary of the resource
-     * 
-     * @return \Illuminate\Http\Response.
-     */
-    public function summary(Request $request)
-    {
-        try {
-
-            $data = [
-                'all' => 0,
-                'active' => 0,
-                'draft' => 0,
-                'deleted' => 0,
-            ];
-
-            $data['all'] = Subject::count();
-            $data['active'] = Subject::where('status', 'active')->count();
-            $data['draft'] = Subject::where('status', 'draft')->count();
-            $data['deleted'] = Subject::onlyTrashed()->count();
-
-            return Json::response($data);
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return Json::exception('Error Model ' . $debug = env('APP_DEBUG', false) == true ? $e : '');
-        } catch (\Illuminate\Database\QueryException $e) {
-            return Json::exception('Error Query ' . $debug = env('APP_DEBUG', false) == true ? $e : '');
-        } catch (\ErrorException $e) {
-            return Json::exception('Error Exception ' . $debug = env('APP_DEBUG', false) == true ? $e : '');
-        }
-    }
-
     /**
      * Display a listing of the resource.
      *
@@ -48,10 +19,9 @@ class SubjectController extends Controller
     public function index(Request $request)
     {
         try {
-            $subject = Subject::entities($request->entities)
-                ->paginate($request->input("pagination", 10));
+            $data = Todo::entities($request->entities)->get();
 
-            return Json::response($subject);
+            return Json::response($data);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return Json::exception('Error Model ' . $debug = env('APP_DEBUG', false) == true ? $e : '');
         } catch (\Illuminate\Database\QueryException $e) {
@@ -80,18 +50,38 @@ class SubjectController extends Controller
     public function store(Request $request)
     {
         try {
-            $data = new Subject();
-            $data->title = $request->title;
-            $data->desc = $request->desc;
-            $data->status = $request->input("status", 'draft');
-            $data->save();
+            DB::beginTransaction();
 
-            return Json::response($data);
+            $todo = new Todo();
+            $todo->title = $request->title;
+            $todo->description = $request->description;
+            $todo->is_mark = $request->is_mark;
+            $todo->tags = $request->tags;
+            $todo->status = $request->status;
+            $todo->save();
+
+            foreach ($request->user_ids as $key => $ids) {
+                $user_has_todo = new UserHasTodo();
+                $user_has_todo->user_id = $ids;
+                $user_has_todo->todo_id = $todo->id;
+                $user_has_todo->save();
+            }
+
+            $master = [
+                'data' => $todo,
+                'users' => $user_has_todo,
+            ];
+
+            DB::commit();
+            return Json::response($master);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            DB::rollBack();
             return Json::exception('Error Model ' . $debug = env('APP_DEBUG', false) == true ? $e : '');
         } catch (\Illuminate\Database\QueryException $e) {
+            DB::rollBack();
             return Json::exception('Error Query ' . $debug = env('APP_DEBUG', false) == true ? $e : '');
         } catch (\ErrorException $e) {
+            DB::rollBack();
             return Json::exception('Error Exception ' . $debug = env('APP_DEBUG', false) == true ? $e : '');
         }
     }
@@ -102,13 +92,12 @@ class SubjectController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show(Request $request, $id)
+    public function show($id, Request $request)
     {
         try {
-            $data = Subject::entities($request->entities)
-                ->findOrFail($id);
+            $todo = Todo::entities($request->entities)->findOrFail($id);
 
-            return Json::response($data);
+            return Json::response($todo);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return Json::exception('Error Model ' . $debug = env('APP_DEBUG', false) == true ? $e : '');
         } catch (\Illuminate\Database\QueryException $e) {
@@ -139,13 +128,14 @@ class SubjectController extends Controller
     public function update(Request $request, $id)
     {
         try {
-            $data = Subject::findOrFail($id);
-            $data->title = $request->input('title', $data->title);
-            $data->desc = $request->input('desc', $data->desc);
-            $data->status = $request->input('status', $data->status);
-            $data->save();
+            $todo = Todo::findOrFail($id);
+            $todo->title = $request->input("title", $todo->title);
+            $todo->description = $request->input('description', $todo->description);
+            $todo->is_mark = $request->input('is_mark', $todo->is_mark);
+            $todo->tags = $request->input('tags', $todo->tags);
+            $todo->save();
 
-            return Json::response($data);
+            return Json::response($todo);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return Json::exception('Error Model ' . $debug = env('APP_DEBUG', false) == true ? $e : '');
         } catch (\Illuminate\Database\QueryException $e) {
@@ -163,6 +153,17 @@ class SubjectController extends Controller
      */
     public function destroy($id)
     {
-        //
+        try {
+            $todo = Todo::findOrFail($id);
+            $todo->delete();
+
+            return Json::response($todo);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return Json::exception('Error Model ' . $debug = env('APP_DEBUG', false) == true ? $e : '');
+        } catch (\Illuminate\Database\QueryException $e) {
+            return Json::exception('Error Query ' . $debug = env('APP_DEBUG', false) == true ? $e : '');
+        } catch (\ErrorException $e) {
+            return Json::exception('Error Exception ' . $debug = env('APP_DEBUG', false) == true ? $e : '');
+        }
     }
 }

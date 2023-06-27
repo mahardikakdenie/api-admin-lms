@@ -137,6 +137,7 @@ class TeacherController extends Controller
     public function show($id, Request $request)
     {
         try {
+
             $teacher = Teacher::entities($request->entities)
                 ->findOrFail($id);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {

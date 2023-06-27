@@ -40,6 +40,8 @@ class RouteServiceProvider extends ServiceProvider
                 ->group(base_path('routes/module/CarouselApi.php'))
                 ->group(base_path('routes/module/Dashboard/TeacherApi.php'))
                 ->group(base_path('routes/module/Dashboard/InstitutionApi.php'))
+                ->group(base_path('routes/module/TodoApi.php'))
+                ->group(base_path('routes/module/SubjectApi.php'))
                 ->group(base_path('routes/module/Dashboard/RegistrantApi.php'));
 
             Route::middleware('web')
