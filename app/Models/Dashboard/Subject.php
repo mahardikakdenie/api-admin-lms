@@ -15,4 +15,9 @@ class Subject extends Model
     {
         return Helper::entities($query, $entities);
     }
+
+    public function scopeSummary($query, $value)
+    {
+        return Helper::summary($query, $value);
+    }
 }

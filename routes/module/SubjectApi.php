@@ -21,4 +21,6 @@ Route::prefix('subject')->group(function () {
     Route::post('', [SubjectController::class, 'store']);
     Route::get('{id}', [SubjectController::class, 'show']);
     Route::put('{id}', [SubjectController::class, 'update']);
+    Route::delete('{id}', [SubjectController::class, 'destroy']);
+    Route::patch('{id}', [SubjectController::class, 'restore']);
 });

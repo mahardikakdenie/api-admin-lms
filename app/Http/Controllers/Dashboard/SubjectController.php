@@ -20,13 +20,13 @@ class SubjectController extends Controller
 
             $data = [
                 'all' => 0,
-                'active' => 0,
+                'publish' => 0,
                 'draft' => 0,
                 'deleted' => 0,
             ];
 
             $data['all'] = Subject::count();
-            $data['active'] = Subject::where('status', 'active')->count();
+            $data['publish'] = Subject::where('status', 'publish')->count();
             $data['draft'] = Subject::where('status', 'draft')->count();
             $data['deleted'] = Subject::onlyTrashed()->count();
 
@@ -49,6 +49,7 @@ class SubjectController extends Controller
     {
         try {
             $subject = Subject::entities($request->entities)
+                ->summary($request->summary)
                 ->paginate($request->input("pagination", 10));
 
             return Json::response($subject);
@@ -124,9 +125,21 @@ class SubjectController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function restore($id)
     {
-        //
+        try {
+            $data = Subject::withTrashed()
+                ->findOrFail($id)
+                ->restore();
+
+            return Json::response($data);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return Json::exception('Error Model ' . $debug = env('APP_DEBUG', false) == true ? $e : '');
+        } catch (\Illuminate\Database\QueryException $e) {
+            return Json::exception('Error Query ' . $debug = env('APP_DEBUG', false) == true ? $e : '');
+        } catch (\ErrorException $e) {
+            return Json::exception('Error Exception ' . $debug = env('APP_DEBUG', false) == true ? $e : '');
+        }
     }
 
     /**
@@ -163,6 +176,17 @@ class SubjectController extends Controller
      */
     public function destroy($id)
     {
-        //
+        try {
+            $data = Subject::findOrFail($id);
+            $data->delete();
+
+            return Json::response($data);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return Json::exception('Error Model ' . $debug = env('APP_DEBUG', false) == true ? $e : '');
+        } catch (\Illuminate\Database\QueryException $e) {
+            return Json::exception('Error Query ' . $debug = env('APP_DEBUG', false) == true ? $e : '');
+        } catch (\ErrorException $e) {
+            return Json::exception('Error Exception ' . $debug = env('APP_DEBUG', false) == true ? $e : '');
+        }
     }
 }

@@ -61,4 +61,17 @@ class Helper
 
         return $slug;
     }
+
+    public static function summary($query, $value)
+    {
+        if ($value) {
+            if ($value === 'deleted') {
+                $query->onlyTrashed();
+            } else if ($value !== 'all') {
+                $query->where('status', $value);
+            }
+        }
+
+        return $query;
+    }
 }
