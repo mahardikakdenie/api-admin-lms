@@ -128,9 +128,13 @@ class SubjectController extends Controller
     public function restore($id)
     {
         try {
-            $data = Subject::withTrashed()
+            $isRestore = Subject::withTrashed()
                 ->findOrFail($id)
                 ->restore();
+
+            if ($isRestore) {
+                $data =  Subject::findOrFail($id);
+            }
 
             return Json::response($data);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
