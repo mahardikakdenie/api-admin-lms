@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
-| API Routes
+| API Subject Routes
 |--------------------------------------------------------------------------
 |
 | Here is where you can register API routes for your application. These
@@ -23,4 +23,5 @@ Route::prefix('subject')->group(function () {
     Route::put('{id}', [SubjectController::class, 'update']);
     Route::delete('{id}', [SubjectController::class, 'destroy']);
     Route::patch('{id}', [SubjectController::class, 'restore']);
+    Route::delete('{id}/deletes', [SubjectController::class, 'destroys']);
 });
