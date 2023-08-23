@@ -67,21 +67,21 @@ class SubjectController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function destroys(Request $request)
-    {
-        try {
-            $data = Subject::whereIn('id', $request->ids);
-            $data->delete();
+    // public function destroys(Request $request)
+    // {
+    //     try {
+    //         $data = Subject::whereIn('id', $request->ids);
+    //         $data->delete();
 
-            return Json::response($data);
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return Json::exception('Error Model ' . $debug = env('APP_DEBUG', false) == true ? $e : '');
-        } catch (\Illuminate\Database\QueryException $e) {
-            return Json::exception('Error Query ' . $debug = env('APP_DEBUG', false) == true ? $e : '');
-        } catch (\ErrorException $e) {
-            return Json::exception('Error Exception ' . $debug = env('APP_DEBUG', false) == true ? $e : '');
-        }
-    }
+    //         return Json::response($data);
+    //     } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+    //         return Json::exception('Error Model ' . $debug = env('APP_DEBUG', false) == true ? $e : '');
+    //     } catch (\Illuminate\Database\QueryException $e) {
+    //         return Json::exception('Error Query ' . $debug = env('APP_DEBUG', false) == true ? $e : '');
+    //     } catch (\ErrorException $e) {
+    //         return Json::exception('Error Exception ' . $debug = env('APP_DEBUG', false) == true ? $e : '');
+    //     }
+    // }
 
     /**
      * Store a newly created resource in storage.
