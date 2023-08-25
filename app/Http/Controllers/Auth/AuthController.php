@@ -72,9 +72,10 @@ class AuthController extends Controller
 	 * @param  \Illuminate\Http\Request  $request
 	 * @return \Illuminate\Http\Response
 	 */
-	public function store(Request $request)
+	public function logout(Request $request)
 	{
-		//
+		$data = $request->user()->currentAccessToken()->delete();
+		return Json::response($data);
 	}
 
 	/**
