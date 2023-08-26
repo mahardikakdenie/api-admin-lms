@@ -39,9 +39,21 @@ class CategoryController extends Controller
         try {
             $data = [
                 'all' => 0,
+                'publish' => 0,
+                'draft' => 0,
             ];
-        } catch (\Throwable $th) {
-            //throw $th;
+
+            $data['all'] = Category::count();
+            $data['publish'] = Category::where('status', 'publish')->count();
+            $data['draft'] = Category::where('status', 'draft')->count();
+
+            return Json::response($data);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return Json::exception('Error Model ' . $debug = env('APP_DEBUG', false) == true ? $e : '');
+        } catch (\Illuminate\Database\QueryException $e) {
+            return Json::exception('Error Query ' . $debug = env('APP_DEBUG', false) == true ? $e : '');
+        } catch (\ErrorException $e) {
+            return Json::exception('Error Exception ' . $debug = env('APP_DEBUG', false) == true ? $e : '');
         }
     }
 
