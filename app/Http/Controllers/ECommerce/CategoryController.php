@@ -34,9 +34,15 @@ class CategoryController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function summary(Request $request)
     {
-        //
+        try {
+            $data = [
+                'all' => 0,
+            ];
+        } catch (\Throwable $th) {
+            //throw $th;
+        }
     }
 
     /**
