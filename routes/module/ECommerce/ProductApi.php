@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ECommerce\ProductController;
 use Illuminate\Support\Facades\Route;
 /*
 |--------------------------------------------------------------------------
@@ -12,7 +13,6 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-
-Route::prefix("e-commerce")
-    ->group(base_path('routes/module/ECommerce/CategoryApi.php'))
-    ->group(base_path('routes/module/ECommerce/ProductApi.php'));
+Route::prefix('products')->group(function () {
+    Route::get('', [ProductController::class, 'index']);
+});
